@@ -40,7 +40,7 @@ export default function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
-          <span className="font-extrabold text-slate-900 text-[17px] tracking-tight">AI Learning Assistant</span>
+          <span className="font-extrabold text-slate-900 text-[17px] tracking-tight">SkillSync AI</span>
         </div>
 
         {/* Center copy */}
@@ -60,7 +60,7 @@ export default function RegisterPage() {
               <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white font-extrabold text-lg flex items-center justify-center shadow-[0_4px_12px_rgba(16,185,129,0.3)] flex-shrink-0">S</div>
               <div>
                 <p className="text-slate-800 font-semibold text-[15px] mb-1 leading-snug">
-                  "LearnAI transformed how I study. I went from failing to A grades in one semester!"
+                  "SkillSync AI transformed how I study. I went from failing to A grades in one semester!"
                 </p>
                 <p className="text-slate-400 text-sm font-medium">— Computer Science Student</p>
               </div>
@@ -93,7 +93,7 @@ export default function RegisterPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
-            <span className="font-extrabold text-slate-900 text-[15px] tracking-tight">AI Learning Assistant</span>
+            <span className="font-extrabold text-slate-900 text-[15px] tracking-tight">SkillSync AI</span>
           </div>
 
           <h1 className="text-[32px] font-extrabold text-slate-900 tracking-tight mb-1">Create your account</h1>
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                   {loading ? (
                     <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Creating Account...</>
                   ) : (
-                    <> Join LearnAI Free <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></>
+                    <> Join SkillSync AI Free <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></>
                   )}
                 </button>
               </form>

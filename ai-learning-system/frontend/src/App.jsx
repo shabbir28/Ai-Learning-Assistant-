@@ -17,7 +17,9 @@ import FlashcardListPage from './pages/FlashCards/FlashcardListPage';
 import FlashcardPage from './pages/FlashCards/FlashcardPage';
 import QuizTakePage from './pages/Quizzes/QuizTakePage';
 import QuizResultPage from './pages/Quizzes/QuizResultPage';
+import QuizListPage from './pages/Quizzes/QuizListPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import SearchPage from './pages/SearchPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
@@ -38,9 +40,11 @@ export default function App() {
           <Route path="/documents/:id" element={<DocumentDetailPage />} />
           <Route path="/flashcards" element={<FlashcardListPage />} />
           <Route path="/flashcards/:id" element={<FlashcardPage />} />
+          <Route path="/quizzes" element={<QuizListPage />} />
           <Route path="/quiz/:id" element={<QuizTakePage />} />
           <Route path="/quiz/:id/result" element={<QuizResultPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/search" element={<SearchPage />} />
         </Route>
       </Route>
 
