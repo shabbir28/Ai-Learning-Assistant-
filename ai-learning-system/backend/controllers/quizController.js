@@ -1,12 +1,14 @@
 const Document = require("../models/Document");
 const Quiz = require("../models/Quiz");
-const { generateQuiz } = require("../utils/openaiHelper");
+const { generateQuizWithDifficulty } = require("../utils/openaiHelper");
 
-// @desc    Generate quiz from a document
+// @desc    Generate quiz from a document (with difficulty support)
 // @route   POST /api/quizzes/generate/:documentId
 // @access  Private
 const generateQuizForDoc = async (req, res) => {
   try {
+    const { difficulty = "medium", count = 5, timePerQuestion = 30 } = req.body;
+
     const document = await Document.findById(req.params.documentId);
     if (!document)
       return res.status(404).json({ message: "Document not found" });
@@ -19,12 +21,18 @@ const generateQuizForDoc = async (req, res) => {
         .json({ message: "No text extracted from this document" });
     }
 
-    const questions = await generateQuiz(document.extractedText, 5);
+    const questions = await generateQuizWithDifficulty(
+      document.extractedText,
+      Number(count),
+      difficulty
+    );
 
     const quiz = await Quiz.create({
       document: document._id,
       owner: req.user._id,
       title: `Quiz – ${document.originalName}`,
+      difficulty,
+      timePerQuestion: Number(timePerQuestion),
       questions,
       totalQuestions: questions.length,
     });
@@ -71,12 +79,12 @@ const getQuizById = async (req, res) => {
   }
 };
 
-// @desc    Submit quiz answers and calculate score
+// @desc    Submit quiz answers (with timer data)
 // @route   POST /api/quizzes/:id/submit
 // @access  Private
 const submitQuiz = async (req, res) => {
   try {
-    const { answers } = req.body; // { "0": "A. ...", "1": "B. ..." }
+    const { answers, timeTaken = {}, timedOut = false } = req.body;
 
     const quiz = await Quiz.findById(req.params.id);
     if (!quiz) return res.status(404).json({ message: "Quiz not found" });
@@ -96,6 +104,8 @@ const submitQuiz = async (req, res) => {
     });
 
     quiz.userAnswers = answers;
+    quiz.timeTaken = timeTaken;
+    quiz.timedOut = timedOut;
     quiz.score = score;
     quiz.isCompleted = true;
     await quiz.save();
@@ -104,6 +114,7 @@ const submitQuiz = async (req, res) => {
       score,
       totalQuestions: quiz.totalQuestions,
       percentage: Math.round((score / quiz.totalQuestions) * 100),
+      timedOut,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

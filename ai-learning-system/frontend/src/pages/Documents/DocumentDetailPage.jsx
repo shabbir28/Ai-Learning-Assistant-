@@ -485,9 +485,13 @@ export default function DocumentDetailPage() {
                     <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2">Generate Quiz</h3>
-                  <p className="text-slate-500 font-medium text-[15px] mb-6">Create a multiple-choice quiz from the document content to evaluate comprehension.</p>
-                  <ActionBtn onClick={handleQuiz} loading={quizLoading} disabled={!doc.extractedText}>
-                    {quizLoading ? 'Generating...' : 'Create Quiz'}
+                  <p className="text-slate-500 font-medium text-[15px] mb-6">Create a multiple-choice quiz — choose difficulty (Easy / Medium / Hard) and timer settings.</p>
+                  <ActionBtn
+                    onClick={() => navigate(`/quiz/generate/${id}`)}
+                    loading={false}
+                    disabled={!doc.extractedText}
+                  >
+                    Create Quiz ⚡
                   </ActionBtn>
                 </div>
               </div>

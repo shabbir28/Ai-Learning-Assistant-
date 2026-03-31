@@ -29,5 +29,9 @@ export const API_PATHS = {
     SUBMIT: (id) => `${API_BASE}/quizzes/${id}/submit`,
     RESULTS: (id) => `${API_BASE}/quizzes/${id}/results`,
   },
+  RECOMMENDATIONS: {
+    GET: `${API_BASE}/recommendations`,
+    REFRESH: `${API_BASE}/recommendations/refresh`,
+  },
   DASHBOARD: `${API_BASE}/dashboard`,
 };
