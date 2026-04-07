@@ -54,6 +54,11 @@ const getDashboardStats = async (req, res) => {
         completedQuizzes,
         avgScore,
       },
+      userStats: {
+        streak: req.user.streak || 0,
+        level: req.user.level || 1,
+        xp: req.user.xp || 0,
+      },
       recentDocuments: documents,
       recentFlashcards: flashcardSets,
       recentQuizzes: quizzes,

@@ -116,6 +116,14 @@ export default function DashboardPage() {
   }, []);
 
   const stats = data?.stats || { totalDocuments: 0, totalFlashcardSets: 0, completedQuizzes: 0 };
+  const userStats = data?.userStats || { streak: 0, level: 1, xp: 0 };
+  
+  const getRankName = (level) => {
+    if (level >= 20) return "Master Learner";
+    if (level >= 10) return "Pro Learner";
+    if (level >= 5) return "Advanced Learner";
+    return "Beginner";
+  };
   
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
@@ -191,16 +199,16 @@ export default function DashboardPage() {
              <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center"><Zap className="w-4 h-4 text-orange-500 dark:text-orange-400" fill="currentColor" /></div>
              <div>
                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Streak</p>
-               <p className="text-sm font-bold text-slate-800 dark:text-white leading-tight">5 Days</p>
+               <p className="text-sm font-bold text-slate-800 dark:text-white leading-tight">{userStats.streak} Days</p>
              </div>
           </div>
           <div className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2.5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] font-heading">
              <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center"><Shield className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="currentColor" /></div>
              <div>
-               <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Level 12</p>
+               <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Level {userStats.level}</p>
                <div className="flex items-center gap-2">
-                 <p className="text-sm font-extrabold text-slate-800 dark:text-white leading-tight">Pro Learner</p>
-                 <span className="text-xs font-bold text-purple-600 dark:text-purple-400">2.4k XP</span>
+                 <p className="text-sm font-extrabold text-slate-800 dark:text-white leading-tight">{getRankName(userStats.level)}</p>
+                 <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{userStats.xp >= 1000 ? (userStats.xp / 1000).toFixed(1) + 'k' : userStats.xp} XP</span>
                </div>
              </div>
           </div>
