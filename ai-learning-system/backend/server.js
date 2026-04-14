@@ -28,6 +28,7 @@ app.use("/api/flashcards", require("./routes/flashcardRoutes"));
 app.use("/api/quizzes", require("./routes/quizRoutes"));
 app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 app.use("/api/recommendations", require("./routes/recommendationRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 
 // Health check
 app.get("/api/health", (req, res) => {

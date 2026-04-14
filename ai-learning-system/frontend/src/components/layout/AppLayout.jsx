@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { notificationService } from '../../services/notificationService';
 
 const navItems = [
   {
@@ -102,7 +103,7 @@ function Sidebar({ onClose }) {
   );
 }
 
-function Topbar({ toggleDarkMode, isDarkMode }) {
+function Topbar({ toggleDarkMode, isDarkMode, notifications = [], onMarkRead }) {
   const { user } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -127,12 +128,7 @@ function Topbar({ toggleDarkMode, isDarkMode }) {
 
   const pageName = navItems.find(n => location.pathname.startsWith(n.to))?.label || 'Dashboard';
 
-  const dummyNotifications = [
-    { id: 1, title: 'Document processed', desc: 'Your document "react_basics.pdf" is ready.', time: '2m ago', unread: true },
-    { id: 2, title: 'Quiz generated', desc: 'A new 10-question quiz was created.', time: '1h ago', unread: true },
-    { id: 3, title: 'Welcome!', desc: 'Welcome to SkillSync AI.', time: '1d ago', unread: false },
-  ];
-  const unreadCount = dummyNotifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
     <>
@@ -301,19 +297,21 @@ function Topbar({ toggleDarkMode, isDarkMode }) {
                   {unreadCount > 0 && <span className="tb-notif-badge">{unreadCount} new</span>}
                 </div>
                 <div style={{ overflowY: 'auto', maxHeight: 280 }}>
-                  {dummyNotifications.map(n => (
-                    <div key={n.id} className="tb-notif-item" style={{ background: n.unread ? 'rgba(0,200,150,.03)' : undefined }}>
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center text-sm font-medium text-slate-500">No new notifications</div>
+                  ) : notifications.map(n => (
+                    <div key={n._id} onClick={() => { if(n.unread) onMarkRead(n._id) }} className="tb-notif-item" style={{ background: n.unread ? 'rgba(0,200,150,.03)' : undefined }}>
                       <div className="tb-notif-dot" style={{ background: n.unread ? '#00c896' : '#e2e8f0' }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="tb-notif-ititle">{n.title}</div>
                         <div className="tb-notif-idesc">{n.desc}</div>
-                        <div className="tb-notif-time">{n.time}</div>
+                        <div className="tb-notif-time">{new Date(n.createdAt).toLocaleString()}</div>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="tb-notif-foot">
-                  <button className="tb-notif-all">View all notifications →</button>
+                  <button className="tb-notif-all" onClick={() => onMarkRead()}>Mark all as read</button>
                 </div>
               </div>
             )}
@@ -343,6 +341,7 @@ export default function AppLayout() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileNotif, setShowMobileNotif] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   
   // Initialize dark mode from localStorage or system preference
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -352,8 +351,32 @@ export default function AppLayout() {
     return false;
   });
 
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
+
+  const fetchNotifications = async () => {
+    if (!token) return;
+    try {
+      const data = await notificationService.getNotifications(token);
+      setNotifications(data);
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [token]);
+
+  const handleMarkRead = async (id = null) => {
+    if (!token) return;
+    try {
+      await notificationService.markAsRead(token, id);
+      fetchNotifications();
+    } catch (error) {
+      console.error('Failed to mark notifications read:', error);
+    }
+  };
 
   // Apply dark mode class to html element
   useEffect(() => {
@@ -375,11 +398,6 @@ export default function AppLayout() {
       setIsMobileSearchOpen(false);
     }
   };
-
-  const dummyNotifications = [
-    { id: 1, title: 'Document processed', desc: 'Your document "react_basics.pdf" is ready.', time: '2m ago', unread: true },
-    { id: 2, title: 'Quiz generated', desc: 'A new 10-question quiz was created.', time: '1h ago', unread: true },
-  ];
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50/50 dark:bg-slate-900 transition-colors duration-300">
@@ -408,7 +426,7 @@ export default function AppLayout() {
       <div className="flex-1 flex flex-col overflow-hidden relative w-full">
         {/* Desktop Topbar */}
         <div className="hidden md:block w-full">
-          <Topbar toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
+          <Topbar toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} notifications={notifications} onMarkRead={handleMarkRead} />
         </div>
         
         {/* Mobile topbar */}
@@ -450,17 +468,20 @@ export default function AppLayout() {
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
+                    {notifications.filter(n => n.unread).length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>}
                  </button>
                  {/* Mobile Notifications Dropdown overlay */}
                  {showMobileNotif && (
                     <div className="absolute right-0 top-12 w-[calc(100vw-32px)] sm:w-80 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50">
                       <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                         <h3 className="font-bold text-slate-800 text-sm">Notifications</h3>
+                        <button className="text-xs text-emerald-600 font-medium" onClick={() => handleMarkRead()}>Mark all read</button>
                       </div>
                       <div className="max-h-[250px] overflow-y-auto">
-                        {dummyNotifications.map(n => (
-                          <div key={n.id} className="p-3 border-b border-slate-50">
+                        {notifications.length === 0 ? (
+                           <div className="p-4 text-center text-sm text-slate-500">No new notifications</div>
+                        ) : notifications.map(n => (
+                          <div key={n._id} onClick={() => { if(n.unread) handleMarkRead(n._id) }} className={`p-3 border-b border-slate-50 ${n.unread ? 'bg-emerald-50/50' : ''}`}>
                             <p className="text-sm font-bold text-slate-800">{n.title}</p>
                             <p className="text-xs text-slate-500 mt-0.5">{n.desc}</p>
                           </div>
